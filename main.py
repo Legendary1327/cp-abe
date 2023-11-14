@@ -1,8 +1,7 @@
 '''
-ciphertext
-
-:Authors:         Shashank Agrawal
-:Date:            05/2016
+ciphertext-policy attribute-based encryption
+:author: charm-crypto
+:Date: 2023-11-14
 '''
 
 from charm.toolbox.symcrypto import SymmetricCryptoAbstraction
@@ -63,26 +62,12 @@ class Waters11():
             'g1_alpha': self.ser(g1_alpha)
         }
         msk = {'g1_alpha': self.ser(g1_alpha)}
-
-        '''
-        filename = "abe_para.json"
-        if os.path.exists(filename):
-            pass
-        else:
-            with open(filename, 'w') as f:
-                json.dump(pk, f)
-            print("write json complete")
-        '''
         return pk, msk
 
     def keygen(self, pk, msk, attr_list):
         """
         Generate a key for a set of attributes.
         """
-
-        if debug:
-            print('Key generation algorithm:\n')
-
         t = self.group.random(ZR)
         k0 = self.deser(msk['g1_alpha']) * (self.deser(pk['g1_a']) ** t)
         L = self.deser(pk['g2']) ** t
@@ -92,7 +77,6 @@ class Waters11():
             K[attr] = self.ser(self.deser(pk['h'][attr]) ** t)
 
         return {'attr_list': attr_list, 'k0': self.ser(k0), 'L': self.ser(L), 'K': K}
-
 
     def symmetric_encrypt(self, msg, dk):
         k = extract_key(dk)
@@ -109,10 +93,6 @@ class Waters11():
         """
          Encrypt a message M under a monotone span program.
         """
-
-        print("type",type(policy_str))
-        if debug:
-            print('Encryption algorithm:\n')
 
         # Symmetric encryption key
         key = self.group.random(GT)
